@@ -24,10 +24,22 @@ running = True
 while running:
     #colours RGB - stays black
     screensize.fill((0, 0, 0))
-    for event in pygame.event.get():
+
+    #movement mechanics
+    for event in pygame.event.get(): #any keystroke is an event ingame
         if event.type == pygame.QUIT:
             running = False
+    #if keystroke is pressed, it will be recognized
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT: #left arrow
+                playerX_change = -0.25
+            if event.key == pygame.K_RIGHT: #right arrow
+                playerX_change = 0.25
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT: #keyboard
+                playerX_change = 0
 
-
+    # updates player movement
+    playerX += playerX_change
     player(playerX,playerY)
     pygame.display.update() #game is always updating screen

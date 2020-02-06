@@ -23,9 +23,9 @@ playerX_change = 0
 #Alien enemy
 enemyImage = pygame.image.load('enemy.png')
 enemyX= random.randint(0,800)
-enemyY= random.randint(50,150)
+enemyY= random.randint(50,100)
 enemyX_change = 4
-enemyY_change = 40
+enemyY_change = 35
 
 #Bomb
 #Ready - not seen on screen
@@ -46,7 +46,7 @@ def enemy(x,y):
 def fire_bomb(x,y):
     global bomb_state
     bomb_state = "fire"
-    screen.blitz(bombImage,(x + 16,y + 10)) #padding from ship
+    screensize.blit(bombImage,(x + 16,y + 10)) #padding from ship
 
 #loop to keep game running and update
 running = True
@@ -68,7 +68,12 @@ while running:
             if event.key == pygame.K_RIGHT: #right arrow
                 playerX_change = 5
             if event.key == pygame.K_SPACE: #spacebar
-                fire_bomb(playerX,bombY)
+                if bomb_state is "ready":
+                    bombX = playerX
+                    fire_bomb(bombX,bombY)
+                    
+                bombX = playerX
+                fire_bomb(bombX,bombY)
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT: #keyboard
                 playerX_change = 0
@@ -94,8 +99,12 @@ while running:
             enemyY += enemyY_change
 
 #bomb movement
-    if bomb_state is "fire"
-        fire_bomb(playerX, bombY)
+    if bombY <= 0:
+        bombY = 480
+        bomb_state = "ready"
+
+    if bomb_state is "fire":
+        fire_bomb(bombX, bombY)
         bombY -= bombY_change
 
 

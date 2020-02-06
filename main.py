@@ -1,6 +1,7 @@
 #main.py for space invaders game
 import pygame
 import random
+import math
 
 #initialization of pygame
 pygame.init()
@@ -37,6 +38,8 @@ bombX_change = 0
 bombY_change = 10
 bomb_state = "ready"
 
+score =0
+
 def player(x,y):
     screensize.blit(playerImage,(x,y))
 
@@ -47,6 +50,13 @@ def fire_bomb(x,y):
     global bomb_state
     bomb_state = "fire"
     screensize.blit(bombImage,(x + 16,y + 10)) #padding from ship
+
+def isCollision(enemyX,enemyY,bombX,bombY):
+    distance = math.sqrt(math.pow(enemyX - bombX, 2) + (math.pow(enemyY - bombY, 2)))
+    if distance < 27:
+        return True
+    else:
+        return False
 
 #loop to keep game running and update
 running = True
@@ -69,9 +79,10 @@ while running:
                 playerX_change = 5
             if event.key == pygame.K_SPACE: #spacebar
                 if bomb_state is "ready":
+                    #finds current x coordinate for ship
                     bombX = playerX
                     fire_bomb(bombX,bombY)
-                    
+
                 bombX = playerX
                 fire_bomb(bombX,bombY)
         if event.type == pygame.KEYUP:
@@ -107,6 +118,14 @@ while running:
         fire_bomb(bombX, bombY)
         bombY -= bombY_change
 
+#collision
+    collision = isCollision(enemyX,enemyY,bombX,bombY)
+    if collision:
+        bombY = 480
+        bomb_state = "ready"
+        score+= 1
+        enemyX = random.randint(0,800)
+        enemyY = random.randint(50,150)
 
     player(playerX,playerY)
     enemy(enemyX,enemyY)

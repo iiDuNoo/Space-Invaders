@@ -22,11 +22,19 @@ playerY=490
 playerX_change = 0
 
 #Alien enemy
-enemyImage = pygame.image.load('enemy.png')
-enemyX= random.randint(0,800)
-enemyY= random.randint(50,100)
-enemyX_change = 4
-enemyY_change = 35
+enemyImage = []
+enemyX= []
+enemyY= []
+enemyX_change = []
+enemyY_change = []
+numberEnemy = 6
+
+for i in range(numberEnemy):
+    enemyImage.append(pygame.image.load('enemy.png'))
+    enemyX.append(random.randint(0,736))
+    enemyY.append(random.randint(50,150))
+    enemyX_change.append(4)
+    enemyY_change.append(35)
 
 #Bomb
 #Ready - not seen on screen
@@ -43,8 +51,8 @@ score =0
 def player(x,y):
     screensize.blit(playerImage,(x,y))
 
-def enemy(x,y):
-    screensize.blit(enemyImage,(x,y))
+def enemy(x,y,i):
+    screensize.blit(enemyImage[i],(x,y))
 
 def fire_bomb(x,y):
     global bomb_state
@@ -83,8 +91,6 @@ while running:
                     bombX = playerX
                     fire_bomb(bombX,bombY)
 
-                bombX = playerX
-                fire_bomb(bombX,bombY)
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT: #keyboard
                 playerX_change = 0
@@ -92,7 +98,6 @@ while running:
 
     # updates player/enemy movement
     playerX += playerX_change
-    enemyX += enemyX_change
 
 #X boundary for player
     if playerX <= 0:
@@ -102,12 +107,26 @@ while running:
         playerX = 736
 
 #X boundary for enemy
-    if enemyX <= 0:
-        enemyX_change = 4
-        enemyY += enemyY_change
-    elif enemyX >= 736:
-            enemyX_change = -4
-            enemyY += enemyY_change
+    for i in range(numberEnemy):
+        enemyX[i] += enemyX_change[i]
+        if enemyX[i] <= 0:
+            enemyX_change[i] = 4
+            enemyY[i] += enemyY_change[i]
+        elif enemyX[i] >= 736:
+            enemyX_change[i] = -4
+            enemyY[i] += enemyY_change[i]
+
+    #collision
+        collision = isCollision(enemyX[i],enemyY[i],bombX,bombY)
+        if collision:
+            bombY = 480
+            bomb_state = "ready"
+            score+= 1
+            print(score)
+            enemyX[i] = random.randint(0,735)
+            enemyY[i] = random.randint(50,150)
+
+        enemy(enemyX[i],enemyY[i], i)
 
 #bomb movement
     if bombY <= 0:
@@ -118,15 +137,7 @@ while running:
         fire_bomb(bombX, bombY)
         bombY -= bombY_change
 
-#collision
-    collision = isCollision(enemyX,enemyY,bombX,bombY)
-    if collision:
-        bombY = 480
-        bomb_state = "ready"
-        score+= 1
-        enemyX = random.randint(0,800)
-        enemyY = random.randint(50,150)
 
     player(playerX,playerY)
-    enemy(enemyX,enemyY)
+
     pygame.display.update() #game is always updating screen

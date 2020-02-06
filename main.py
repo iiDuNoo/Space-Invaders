@@ -2,6 +2,7 @@
 import pygame
 import random
 import math
+from pygame import mixer
 
 #initialization of pygame
 pygame.init()
@@ -9,6 +10,10 @@ screensize = pygame.display.set_mode((800,600)) #width x height
 
 #Background image
 bg = pygame.image.load('background.png')
+
+#Sound
+mixer.music.load('background.wav')
+mixer.music.play(-1)
 
 #Window Title and Picture
 pygame.display.set_caption("Space Invaders")
@@ -46,7 +51,16 @@ bombX_change = 0
 bombY_change = 10
 bomb_state = "ready"
 
+#score
+
 score =0
+font = pygame.font.Font('freesansbold.ttf',32)
+textX = 10
+textY = 10
+
+def showscore(x,y):
+    score1 = font.render("Score : " + str(score),True, (255,255,255))
+    screensize.blit(score1,(x,y))
 
 def player(x,y):
     screensize.blit(playerImage,(x,y))
@@ -87,6 +101,8 @@ while running:
                 playerX_change = 5
             if event.key == pygame.K_SPACE: #spacebar
                 if bomb_state is "ready":
+                    bombsound = mixer.Sound('laser.wav')
+                    bombsound.play()
                     #finds current x coordinate for ship
                     bombX = playerX
                     fire_bomb(bombX,bombY)
@@ -119,10 +135,11 @@ while running:
     #collision
         collision = isCollision(enemyX[i],enemyY[i],bombX,bombY)
         if collision:
+            explosionsound = mixer.Sound('explosion.wav')
+            explosionsound.play()
             bombY = 480
             bomb_state = "ready"
             score+= 1
-            print(score)
             enemyX[i] = random.randint(0,735)
             enemyY[i] = random.randint(50,150)
 
@@ -139,5 +156,5 @@ while running:
 
 
     player(playerX,playerY)
-
+    showscore(textX,textY)
     pygame.display.update() #game is always updating screen

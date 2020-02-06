@@ -55,12 +55,17 @@ bomb_state = "ready"
 
 score =0
 font = pygame.font.Font('freesansbold.ttf',32)
+overfont = pygame.font.Font('freesansbold.ttf',64)
 textX = 10
 textY = 10
 
 def showscore(x,y):
     score1 = font.render("Score : " + str(score),True, (255,255,255))
     screensize.blit(score1,(x,y))
+
+def gameover_text():
+    over = overfont.render("Game Over",True, (255,255,255))
+    screensize.blit(over,(200,250))
 
 def player(x,y):
     screensize.blit(playerImage,(x,y))
@@ -124,6 +129,14 @@ while running:
 
 #X boundary for enemy
     for i in range(numberEnemy):
+
+        #game over - moves enemies off screen
+        if enemyY[i] > 440:
+            for x in range(numberEnemy):
+                enemyY[x] = 2000
+            gameover_text()
+            break
+
         enemyX[i] += enemyX_change[i]
         if enemyX[i] <= 0:
             enemyX_change[i] = 4
